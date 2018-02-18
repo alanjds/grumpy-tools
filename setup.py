@@ -37,7 +37,7 @@ setup(
     packages=find_packages(include=['grumpy']),
     entry_points={
         'console_scripts': [
-            'grumpy_tools=grumpy.cli:main',
+            'grumpy=grumpy.cli:main',
         ],
     },
     include_package_data=True,
