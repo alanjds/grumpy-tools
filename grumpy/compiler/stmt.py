@@ -26,8 +26,8 @@ from grumpy.compiler import expr
 from grumpy.compiler import expr_visitor
 from grumpy.compiler import imputil
 from grumpy.compiler import util
-from grumpy.pythonparser import algorithm
-from grumpy.pythonparser import ast
+from grumpy.vendor.pythonparser import algorithm
+from grumpy.vendor.pythonparser import ast
 
 
 _NATIVE_TYPE_PREFIX = 'type_'

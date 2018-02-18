@@ -23,8 +23,8 @@ import textwrap
 
 from grumpy.compiler import expr
 from grumpy.compiler import util
-from grumpy.pythonparser import algorithm
-from grumpy.pythonparser import ast
+from grumpy.vendor.pythonparser import algorithm
+from grumpy.vendor.pythonparser import ast
 
 
 class ExprVisitor(algorithm.Visitor):
