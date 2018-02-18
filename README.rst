@@ -30,6 +30,8 @@ Python Tools needed by the Grumpy Transpiler & Runtime
 Quick Start
 -----------
 
+.. code-block:: bash
+
         pip install https://github.com/alanjds/grumpy-tools/archive/master.zip
         echo 'print("Hello World")' > hello.py
         grumpy transpile hello.py
