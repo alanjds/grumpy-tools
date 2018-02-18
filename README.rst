@@ -32,7 +32,7 @@ Quick Start
 
 .. code-block:: bash
 
-        pip install https://github.com/alanjds/grumpy-tools/archive/master.zip
+        pip2 install https://github.com/alanjds/grumpy-tools/archive/master.zip
         echo 'print("Hello World")' > hello.py
         grumpy transpile hello.py
         # Awe the Golang-transpiled code echoed to stdout!
