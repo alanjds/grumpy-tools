@@ -21,7 +21,7 @@ from __future__ import unicode_literals
 import codecs
 import contextlib
 import string
-import io as StringIO
+import StringIO
 import textwrap
 
 try:
