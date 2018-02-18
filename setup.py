@@ -34,10 +34,10 @@ setup(
     author="Alan Justino et al.",
     author_email='alan.justino@yahoo.com.br',
     url='https://github.com/alanjds/grumpy_tools',
-    packages=find_packages(include=['grumpy_tools']),
+    packages=find_packages(include=['grumpy']),
     entry_points={
         'console_scripts': [
-            'grumpy_tools=grumpy_tools.cli:main',
+            'grumpy_tools=grumpy.cli:main',
         ],
     },
     include_package_data=True,
