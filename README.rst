@@ -27,13 +27,19 @@ Python Tools needed by the Grumpy Transpiler & Runtime
 * Documentation: https://grumpy-tools.readthedocs.io.
 
 
-Features
---------
+Quick Start
+-----------
 
-* TODO
+        pip install https://github.com/alanjds/grumpy-tools/archive/master.zip
+        echo 'print("Hello World")' > hello.py
+        grumpy transpile hello.py
+        # Awe the Golang-transpiled code echoed to stdout!
 
 Credits
 -------
+
+All the code cames from the Google Grumpy project. This is just a PoC trying to
+provide a better CLI than the original one.
 
 This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
 
