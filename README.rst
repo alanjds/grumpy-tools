@@ -32,6 +32,7 @@ Quick Start
 
 .. code-block:: bash
 
+        pip2 install -U pip setuptools
         pip2 install https://github.com/alanjds/grumpy-tools/archive/master.zip
         echo 'print("Hello World")' > hello.py
         grumpy transpile hello.py
