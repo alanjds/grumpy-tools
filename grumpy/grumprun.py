@@ -83,7 +83,7 @@ def main(args):
       # Compile the dummy script to Go using grumpc.
       fd = os.open(os.path.join(mod_dir, 'module.go'), os.O_WRONLY | os.O_CREAT)
       try:
-        p = subprocess.Popen('grumpc ' + script, stdout=fd, shell=True)
+        p = subprocess.Popen('grumpy transpile ' + script, stdout=fd, shell=True)
         if p.wait():
           return 1
       finally:
