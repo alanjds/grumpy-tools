@@ -23,10 +23,10 @@ def transpile(args=None, script=None, modname=None):
 
 @main.command('run')
 @click.option('-m', '--modname', help='Run the named module')
-def transpile(args=None, modname=None):
+def transpile(modname=None):
     import sys
     sys.argv.pop(0)
-    return grumprun.main(grumprun.parser.parse_args())
+    return grumprun.main(modname=modname)
 
 
 if __name__ == "__main__":
