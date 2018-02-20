@@ -23,7 +23,9 @@ import argparse
 import os
 import sys
 import textwrap
+from StringIO import StringIO
 
+import grumpy
 from grumpy.compiler import block
 from grumpy.compiler import imputil
 from grumpy.compiler import stmt
@@ -31,7 +33,30 @@ from grumpy.compiler import util
 from grumpy.vendor import pythonparser
 
 
-def main(script=None, modname=None):
+def honor_pep3147(script_path, stream):
+  assert script_path.endswith('.py')
+  GOPATH_PATTERN = 'gopath/src/__python__/{script_basename}'
+  magic_tag = 'grumpy-' + grumpy.__version__.replace('.', '')  # cpython-27
+  script_folder = os.path.dirname(os.path.abspath(script_path))
+  script_basename = script_path.rpartition('.')[0]
+  bytecompiled_name = '{script_basename}.{magic_tag}.{suffix}'.format(  # hello.cpython-27-PYTEST.pyc
+    script_basename=script_basename,
+    magic_tag=magic_tag,
+    suffix='pyc',
+  )
+  final_folder = os.path.join(
+    script_folder,
+    '__pycache__',
+    bytecompiled_name,
+    GOPATH_PATTERN.format(script_basename=script_basename),
+  )
+  final_filename = os.path.join(final_folder, 'module.go')
+  os.makedirs(final_folder)
+  with open(final_filename, 'w') as final_file:
+    final_file.writelines(stream.readlines())
+
+
+def main(script=None, modname=None, pep3147=False):
   assert script and modname, 'Script "%s" or Modname "%s" is empty' % (script,modname)
 
   gopath = os.getenv('GOPATH', None)
@@ -70,7 +95,8 @@ def main(script=None, modname=None):
       print >> sys.stderr, str(e)
       return 2
 
-  writer = util.Writer(sys.stdout)
+  file_buffer = StringIO()
+  writer = util.Writer(file_buffer)
   tmpl = textwrap.dedent("""\
       package $package
       import πg "grumpy"
@@ -91,4 +117,11 @@ def main(script=None, modname=None):
     \t})
     \tπg.RegisterModule($modname, Code)
     }"""), modname=util.go_str(modname))
+
+  if pep3147:
+    file_buffer.seek(0)
+    honor_pep3147(script, file_buffer)
+
+  file_buffer.seek(0)
+  sys.stdout.writelines(file_buffer.readlines())
   return 0
