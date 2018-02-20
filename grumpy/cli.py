@@ -14,7 +14,8 @@ def main(args=None):
 
 @main.command('transpile')
 @click.argument('script')
-def transpile(args=None, script=None):
+@click.option('-m', '--modname', help='Run the named module')
+def transpile(args=None, script=None, modname=None):
     import sys
     sys.argv.pop(0)
     return grumpc.main(grumpc.parser.parse_args())
