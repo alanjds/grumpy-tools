@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """Console script for grumpy_tools."""
+import sys
 
 import click
 
@@ -19,13 +20,15 @@ def transpile(script=None, modname=None):
     """
     Translates the python SCRIPT file to Go, then prints to stdout
     """
-    return grumpc.main(script=script, modname=modname)
+    result = grumpc.main(script=script, modname=modname)
+    sys.exit(result)
 
 
 @main.command('run')
 @click.option('-m', '--modname', help='Run the named module')
-def transpile(modname=None):
-    return grumprun.main(modname=modname)
+def run(modname=None):
+    result = grumprun.main(modname=modname)
+    sys.exit(result)
 
 
 if __name__ == "__main__":
