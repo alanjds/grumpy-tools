@@ -13,9 +13,12 @@ def main(args=None):
     return 0
 
 @main.command('transpile')
-@click.argument('script', help='Python source filename')
+@click.argument('script')
 @click.option('-m', '--modname', default='__main__', help='Python module name')
 def transpile(script=None, modname=None):
+    """
+    Translates the python SCRIPT file to Go, then prints to stdout
+    """
     return grumpc.main(script=script, modname=modname)
 
 
