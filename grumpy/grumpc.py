@@ -31,11 +31,6 @@ from grumpy.compiler import util
 from grumpy.vendor import pythonparser
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument('script', help='Python source filename')
-parser.add_argument('-modname', default='__main__', help='Python module name')
-
-
 def main(script=None, modname=None):
   assert script and modname, 'Script "%s" or Modname "%s" is empty' % (script,modname)
 

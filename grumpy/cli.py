@@ -13,8 +13,8 @@ def main(args=None):
     return 0
 
 @main.command('transpile')
-@click.argument('script')
-@click.option('-m', '--modname', default='__main__', help='Run the named module')
+@click.argument('script', help='Python source filename')
+@click.option('-m', '--modname', default='__main__', help='Python module name')
 def transpile(script=None, modname=None):
     return grumpc.main(script=script, modname=modname)
 
