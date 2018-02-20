@@ -1,27 +1,35 @@
 # -*- coding: utf-8 -*-
 
 """Console script for grumpy_tools."""
+import sys
 
 import click
 
-import grumpc
+from . import grumpc, grumprun
 
 
 @click.group('grumpy')
 def main(args=None):
     """Console script for grumpy_tools."""
-    click.echo("Replace this message by putting your code into "
-               "grumpy_tools.cli.main")
-    click.echo("See click documentation at http://click.pocoo.org/")
     return 0
 
 
 @main.command('transpile')
 @click.argument('script')
-def transpile(args=None, script=None):
-    import sys
-    sys.argv.pop(0)
-    return grumpc.main(grumpc.parser.parse_args())
+@click.option('-m', '--modname', default='__main__', help='Python module name')
+def transpile(script=None, modname=None):
+    """
+    Translates the python SCRIPT file to Go, then prints to stdout
+    """
+    result = grumpc.main(script=script, modname=modname)
+    sys.exit(result)
+
+
+@main.command('run')
+@click.option('-m', '--modname', help='Run the named module')
+def run(modname=None):
+    result = grumprun.main(modname=modname)
+    sys.exit(result)
 
 
 if __name__ == "__main__":

@@ -7,8 +7,7 @@ import pytest
 
 from click.testing import CliRunner
 
-from grumpy_tools import grumpy_tools
-from grumpy_tools import cli
+from grumpy import cli
 
 
 @pytest.fixture
@@ -32,7 +31,7 @@ def test_command_line_interface():
     runner = CliRunner()
     result = runner.invoke(cli.main)
     assert result.exit_code == 0
-    assert 'grumpy_tools.cli.main' in result.output
+    assert 'Usage: ' in result.output
     help_result = runner.invoke(cli.main, ['--help'])
     assert help_result.exit_code == 0
     assert '--help  Show this message and exit.' in help_result.output
