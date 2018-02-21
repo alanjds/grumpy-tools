@@ -35,7 +35,7 @@ from grumpy.vendor import pythonparser
 
 def honor_pep3147(script_path, stream):
   assert script_path.endswith('.py')
-  GOPATH_PATTERN = 'gopath/src/__python__/{script_basename}'
+  GOPATH_PATTERN = 'gopath/src/__python__/'
   magic_tag = 'grumpy-' + grumpy.__version__.replace('.', '')  # cpython-27
   script_folder = os.path.dirname(os.path.abspath(script_path))
   script_basename = script_path.rpartition('.')[0]
@@ -44,16 +44,24 @@ def honor_pep3147(script_path, stream):
     magic_tag=magic_tag,
     suffix='pyc',
   )
-  final_folder = os.path.join(
+  base_folder = os.path.join(
     script_folder,
     '__pycache__',
     bytecompiled_name,
-    GOPATH_PATTERN.format(script_basename=script_basename),
+    GOPATH_PATTERN,
   )
-  final_filename = os.path.join(final_folder, 'module.go')
-  os.makedirs(final_folder)
-  with open(final_filename, 'w') as final_file:
-    final_file.writelines(stream.readlines())
+  module_folder = os.path.join(base_folder, script_basename)
+  if not os.path.exists(module_folder):
+    os.makedirs(module_folder)
+
+  gopath_script_filename = os.path.join(base_folder, script_path)
+  with open(gopath_script_filename, 'w') as gopath_script_file:
+    with open(script_path) as original_file:
+      gopath_script_file.writelines(original_file.readlines())
+
+  module_filename = os.path.join(module_folder, 'module.go')
+  with open(module_filename, 'w') as module_file:
+    module_file.writelines(stream.readlines())
 
 
 def main(script=None, modname=None, pep3147=False):
