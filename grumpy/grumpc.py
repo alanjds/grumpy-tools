@@ -73,7 +73,7 @@ def honor_pep3147(script_path, stream):
     module_file.writelines(stream.readlines())
 
 
-def main(script=None, modname=None, pep3147=False):
+def main(script=None, modname='__main__', pep3147=False):
   assert script and modname, 'Script "%s" or Modname "%s" is empty' % (script,modname)
 
   gopath = os.getenv('GOPATH', None)
