@@ -39,7 +39,7 @@ GRUMPY_MAGIC_TAG = 'grumpy-' + grumpy.__version__.replace('.', '')  # alike cpyt
 ORIGINAL_MAGIC_TAG = sys.implementation.cache_tag  # On Py27, only because importlib2
 
 
-def honor_pep3147(script_path, stream):
+def honor_pep3147(script_path, stream=None, only_makedirs=False):
   assert script_path.endswith('.py')
 
   script_basename = script_path.rpartition('.')[0]
@@ -61,6 +61,9 @@ def honor_pep3147(script_path, stream):
     if not os.path.exists(needed_folder):   # 2. Create the needed folder
       os.makedirs(needed_folder)
 
+  if only_makedirs:
+    return gopath_folder
+
   gopath_script_filename = os.path.normpath(os.path.join(
     module_folder, '..', script_path
   ))
@@ -71,6 +74,7 @@ def honor_pep3147(script_path, stream):
   module_filename = os.path.join(module_folder, 'module.go')
   with open(module_filename, 'w') as module_file:
     module_file.writelines(stream.readlines())
+  return gopath_folder
 
 
 def main(script=None, modname='__main__', pep3147=False):
@@ -140,7 +144,7 @@ def main(script=None, modname='__main__', pep3147=False):
 
   if pep3147:
     file_buffer.seek(0)
-    honor_pep3147(script, file_buffer)
+    honor_pep3147(script, stream=file_buffer)
 
   file_buffer.seek(0)
   sys.stdout.writelines(file_buffer.readlines())
