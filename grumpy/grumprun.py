@@ -30,6 +30,7 @@ import sys
 import tempfile
 
 from grumpy.compiler import imputil
+from grumpy import grumpc
 
 
 module_tmpl = string.Template("""\
@@ -77,13 +78,13 @@ def main(modname=None):
       gopath = gopath + os.pathsep + workdir
       os.putenv('GOPATH', gopath)
       # Compile the dummy script to Go using grumpc.
-      fd = os.open(os.path.join(mod_dir, 'module.go'), os.O_WRONLY | os.O_CREAT)
-      try:
-        p = subprocess.Popen('grumpy transpile ' + script, stdout=fd, shell=True)
-        if p.wait():
-          return 1
-      finally:
-        os.close(fd)
+      with open(os.path.join(mod_dir, 'module.go'), 'w+') as dummy_file:
+        original_stdout = sys.stdout
+        sys.stdout = dummy_file
+        result = grumpc.main(script, pep3147=True)
+        sys.stdout = original_stdout
+        if result != 0:
+          return result
 
     names = imputil.calculate_transitive_deps(modname, script, gopath)
     # Make sure traceback is available in all Python binaries.
