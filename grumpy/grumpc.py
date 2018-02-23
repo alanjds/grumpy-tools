@@ -78,24 +78,27 @@ def main(script=None, modname='__main__', pep3147=False):
 
   gopath = os.getenv('GOPATH', None)
   if not gopath:
-    print >> sys.stderr, 'GOPATH not set'
-    return 1
+    to_raise = RuntimeError('GOPATH not set')
+    to_raise.exitcode = 1
+    raise to_raise
 
   with open(script) as py_file:
     py_contents = py_file.read()
   try:
     mod = pythonparser.parse(py_contents)
   except SyntaxError as e:
-    print >> sys.stderr, '{}: line {}: invalid syntax: {}'.format(
-        e.filename, e.lineno, e.text)
-    return 2
+    to_raise = RuntimeError('{}: line {}: invalid syntax: {}'.format(
+        e.filename, e.lineno, e.text
+    ))
+    to_raise.exitcode = 2
+    raise to_raise
 
   # Do a pass for compiler directives from `from __future__ import *` statements
   try:
     future_node, future_features = imputil.parse_future_features(mod)
   except util.CompileError as e:
-    print >> sys.stderr, str(e)
-    return 2
+    e.exitcode = 2
+    raise
 
   importer = imputil.Importer(gopath, modname, script,
                               future_features.absolute_import)
@@ -109,8 +112,8 @@ def main(script=None, modname='__main__', pep3147=False):
     try:
       visitor.visit(mod)
     except util.ParseError as e:
-      print >> sys.stderr, str(e)
-      return 2
+      e.exitcode = 2
+      raise
 
   file_buffer = StringIO()
   writer = util.Writer(file_buffer)
@@ -141,4 +144,3 @@ def main(script=None, modname='__main__', pep3147=False):
 
   file_buffer.seek(0)
   sys.stdout.writelines(file_buffer.readlines())
-  return 0
