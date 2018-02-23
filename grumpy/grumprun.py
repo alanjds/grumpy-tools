@@ -81,10 +81,8 @@ def main(modname=None):
       with open(os.path.join(mod_dir, 'module.go'), 'w+') as dummy_file:
         original_stdout = sys.stdout
         sys.stdout = dummy_file
-        result = grumpc.main(script, pep3147=True)
+        grumpc.main(script, pep3147=True)
         sys.stdout = original_stdout
-        if result != 0:
-          return result
 
     names = imputil.calculate_transitive_deps(modname, script, gopath)
     # Make sure traceback is available in all Python binaries.
