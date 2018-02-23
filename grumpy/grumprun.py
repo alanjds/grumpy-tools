@@ -54,7 +54,7 @@ def main(modname=None):
     print >> sys.stderr, 'GOPATH not set'
     return 1
 
-  workdir = tempfile.mkdtemp()
+  workdir = grumpc.honor_pep3147('__grumpy__main__.py', only_makedirs=True)
   try:
     if modname:
       # Find the script associated with the given module.
@@ -94,7 +94,7 @@ def main(modname=None):
       f.write(module_tmpl.substitute(package=package, imports=imports))
     return subprocess.Popen('go run ' + go_main, shell=True).wait()
   finally:
-    shutil.rmtree(workdir)
+    pass
 
 
 def _package_name(modname):
