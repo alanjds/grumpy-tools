@@ -25,6 +25,8 @@ import sys
 import textwrap
 from StringIO import StringIO
 
+import importlib2
+
 import grumpy
 from grumpy.compiler import block
 from grumpy.compiler import imputil
@@ -32,29 +34,36 @@ from grumpy.compiler import stmt
 from grumpy.compiler import util
 from grumpy.vendor import pythonparser
 
+GOPATH_PATTERN = 'gopath/src/__python__/'
+GRUMPY_MAGIC_TAG = 'grumpy-' + grumpy.__version__.replace('.', '')  # alike cpython-27
+ORIGINAL_MAGIC_TAG = sys.implementation.cache_tag  # On Py27, only because importlib2
+
 
 def honor_pep3147(script_path, stream):
   assert script_path.endswith('.py')
-  GOPATH_PATTERN = 'gopath/src/__python__/'
-  magic_tag = 'grumpy-' + grumpy.__version__.replace('.', '')  # cpython-27
-  script_folder = os.path.dirname(os.path.abspath(script_path))
-  script_basename = script_path.rpartition('.')[0]
-  bytecompiled_name = '{script_basename}.{magic_tag}.{suffix}'.format(  # hello.cpython-27-PYTEST.pyc
-    script_basename=script_basename,
-    magic_tag=magic_tag,
-    suffix='pyc',
-  )
-  base_folder = os.path.join(
-    script_folder,
-    '__pycache__',
-    bytecompiled_name,
-    GOPATH_PATTERN,
-  )
-  module_folder = os.path.join(base_folder, script_basename)
-  if not os.path.exists(module_folder):
-    os.makedirs(module_folder)
 
-  gopath_script_filename = os.path.join(base_folder, script_path)
+  script_basename = script_path.rpartition('.')[0]
+
+  ### TODO: Fix race conditions
+  sys.implementation.cache_tag = GRUMPY_MAGIC_TAG
+  cache_folder = os.path.abspath(os.path.normpath(
+    importlib2._bootstrap.cache_from_source(script_path)
+  ))
+  sys.implementation.cache_tag = ORIGINAL_MAGIC_TAG
+  ###
+
+  gopath_folder = os.path.join(cache_folder, GOPATH_PATTERN)
+  module_folder = os.path.join(gopath_folder, script_basename)
+
+  for needed_folder in (cache_folder, gopath_folder, module_folder):
+    if os.path.isfile(needed_folder):   # 1. Remove the file named as needed folder
+      os.unlink(path)
+    if not os.path.exists(needed_folder):   # 2. Create the needed folder
+      os.makedirs(needed_folder)
+
+  gopath_script_filename = os.path.normpath(os.path.join(
+    module_folder, '..', script_path
+  ))
   with open(gopath_script_filename, 'w') as gopath_script_file:
     with open(script_path) as original_file:
       gopath_script_file.writelines(original_file.readlines())
