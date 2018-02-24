@@ -14,6 +14,7 @@ with open('HISTORY.rst') as history_file:
 requirements = [
     'Click>=6.0',
     # TODO: Put package requirements here
+    'importlib2>=3.5.0.2',
 ]
 
 setup_requirements = [
