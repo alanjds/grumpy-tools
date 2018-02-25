@@ -48,13 +48,17 @@ func main() {
 """)
 
 
-def main(modname=None):
+def main(modname=None, pep3147=False):
   gopath = os.getenv('GOPATH', None)
   if not gopath:
     print >> sys.stderr, 'GOPATH not set'
     return 1
 
-  workdir = grumpc.honor_pep3147('__grumpy__main__.py', only_makedirs=True)
+  if pep3147:
+    workdir = grumpc.honor_pep3147('__grumpy__main__.py', only_makedirs=True)
+  else:
+    workdir = tempfile.mkdtemp()
+
   try:
     if modname:
       # Find the script associated with the given module.
@@ -94,7 +98,8 @@ def main(modname=None):
       f.write(module_tmpl.substitute(package=package, imports=imports))
     return subprocess.Popen('go run ' + go_main, shell=True).wait()
   finally:
-    pass
+    if not pep3147:
+      shutil.rmtree(workdir)
 
 
 def _package_name(modname):

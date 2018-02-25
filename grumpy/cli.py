@@ -32,8 +32,9 @@ def transpile(script=None, modname=None, pep3147=False):
 
 @main.command('run')
 @click.option('-m', '--modname', help='Run the named module')
-def run(modname=None):
-    result = grumprun.main(modname=modname)
+@click.option('--pep3147', is_flag=True, help='Put the transpiled outputs on a __pycache__ folder')
+def run(modname=None, pep3147=False):
+    result = grumprun.main(modname=modname, pep3147=pep3147)
     sys.exit(result)
 
 
