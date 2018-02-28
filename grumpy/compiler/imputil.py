@@ -21,6 +21,7 @@ from __future__ import unicode_literals
 
 import collections
 import functools
+import sys
 import os
 import os.path
 
@@ -90,7 +91,21 @@ class Importer(algorithm.Visitor):
         asname = alias.asname if alias.asname else alias.name.split('/')[-1]
         imp.add_binding(Import.MODULE, asname, 0)
       else:
-        imp = self._resolve_import(node, alias.name)
+        try:
+          imp = self._resolve_import(node, alias.name)
+        except util.ImportError:  # may is it not YET available?
+          # import wdb; wdb.set_trace()
+          from grumpy import grumpc
+          modname = node.names[0].name
+
+          for script_path in find_script_on_path(node.names[0].name):
+            # TODO: Try to compile every path
+            grumpc.main(script_path, modname=modname, pep3147=True)
+            break
+
+          # May be ready. But even if not importing, the code may still be valid
+          imp = self._resolve_import(node, alias.name)
+
         if alias.asname:
           imp.add_binding(Import.MODULE, alias.asname, imp.name.count('.'))
         else:
@@ -242,6 +257,13 @@ def find_script(dirname, name):
   if os.path.isfile(script):
     return script
   return None
+
+
+def find_script_on_path(name):
+  for p in sys.path:  # Python search paths
+    found = find_script(p, name)
+    if found:
+      yield found
 
 
 _FUTURE_FEATURES = (
