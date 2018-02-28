@@ -42,7 +42,7 @@ ORIGINAL_MAGIC_TAG = sys.implementation.cache_tag  # On Py27, only because impor
 def honor_pep3147(script_path, stream=None, only_makedirs=False):
   assert script_path.endswith('.py')
 
-  script_basename = script_path.rpartition('.')[0]
+  script_basename = script_path.rpartition('.')[0].rpartition('/')[-1]
 
   ### TODO: Fix race conditions
   sys.implementation.cache_tag = GRUMPY_MAGIC_TAG
@@ -65,7 +65,7 @@ def honor_pep3147(script_path, stream=None, only_makedirs=False):
     return gopath_folder
 
   gopath_script_filename = os.path.normpath(os.path.join(
-    module_folder, '..', script_path
+    module_folder, '..', script_basename + '.py'
   ))
   with open(gopath_script_filename, 'w') as gopath_script_file:
     with open(script_path) as original_file:
