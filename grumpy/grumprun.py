@@ -57,7 +57,7 @@ def main(modname=None, pep3147=False):
   dummy_modname = '__grumpy__main__.py'
 
   if pep3147:
-    workdir = grumpc.honor_pep3147(dummy_modname, only_makedirs=True)
+    workdir = grumpc.honor_pep3147(dummy_modname, only_makedirs=True)['gopath_modules_folder']
   else:
     workdir = tempfile.mkdtemp()
 
@@ -74,7 +74,11 @@ def main(modname=None, pep3147=False):
         return 1
     else:
       # Generate a dummy python script on the GOPATH.
-      modname = ''.join(random.choice(string.ascii_letters) for _ in range(16))
+      if pep3147:
+        modname = dummy_modname.replace('.py', '')
+      else:
+        modname = ''.join(random.choice(string.ascii_letters) for _ in range(16))
+
       py_dir = os.path.join(workdir, 'src', '__python__')
       mod_dir = os.path.join(py_dir, modname)
       if not os.path.exists(mod_dir):
