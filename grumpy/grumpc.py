@@ -34,7 +34,8 @@ from grumpy.compiler import stmt
 from grumpy.compiler import util
 from grumpy.vendor import pythonparser
 
-GOPATH_PATTERN = 'gopath/src/__python__/'
+GOPATH_FOLDER = 'gopath'
+GOPATH_PATTERN = 'src/__python__/'
 GRUMPY_MAGIC_TAG = 'grumpy-' + grumpy.__version__.replace('.', '')  # alike cpython-27
 ORIGINAL_MAGIC_TAG = sys.implementation.cache_tag  # On Py27, only because importlib2
 
@@ -52,8 +53,9 @@ def honor_pep3147(script_path, stream=None, only_makedirs=False):
   sys.implementation.cache_tag = ORIGINAL_MAGIC_TAG
   ###
 
-  gopath_folder = os.path.join(cache_folder, GOPATH_PATTERN)
-  module_folder = os.path.join(gopath_folder, script_basename)
+  gopath_folder = os.path.join(cache_folder, GOPATH_FOLDER)
+  gopath_modules_folder = os.path.join(gopath_folder, GOPATH_PATTERN)
+  module_folder = os.path.join(gopath_modules_folder, script_basename)
 
   for needed_folder in (cache_folder, gopath_folder, module_folder):
     if os.path.isfile(needed_folder):   # 1. Remove the file named as needed folder
@@ -61,8 +63,14 @@ def honor_pep3147(script_path, stream=None, only_makedirs=False):
     if not os.path.exists(needed_folder):   # 2. Create the needed folder
       os.makedirs(needed_folder)
 
+  outputs = {
+    'cache_folder': cache_folder,
+    'gopath_folder': gopath_folder,
+    'gopath_modules_folder': gopath_modules_folder,
+    'module_folder': module_folder,
+  }
   if only_makedirs:
-    return gopath_folder
+    return outputs
 
   gopath_script_filename = os.path.normpath(os.path.join(
     module_folder, '..', script_basename + '.py'
@@ -74,10 +82,10 @@ def honor_pep3147(script_path, stream=None, only_makedirs=False):
   module_filename = os.path.join(module_folder, 'module.go')
   with open(module_filename, 'w') as module_file:
     module_file.writelines(stream.readlines())
-  return gopath_folder
+  return outputs
 
 
-def main(script=None, modname='__main__', pep3147=False):
+def main(script=None, modname='__main__', pep3147=False, extend_gopath=False):
   assert script and modname, 'Script "%s" or Modname "%s" is empty' % (script,modname)
 
   gopath = os.getenv('GOPATH', None)
@@ -144,7 +152,10 @@ def main(script=None, modname='__main__', pep3147=False):
 
   if pep3147:
     file_buffer.seek(0)
-    honor_pep3147(script, stream=file_buffer)
+    new_gopath = honor_pep3147(script, stream=file_buffer)['gopath_folder']
+    if extend_gopath:
+      gopath = gopath + os.pathsep + new_gopath
+      os.environ['GOPATH'] = gopath
 
   file_buffer.seek(0)
   sys.stdout.writelines(file_buffer.readlines())
