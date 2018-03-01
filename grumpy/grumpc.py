@@ -154,8 +154,7 @@ def main(script=None, modname='__main__', pep3147=False, extend_gopath=False):
     file_buffer.seek(0)
     new_gopath = honor_pep3147(script, stream=file_buffer)['gopath_folder']
     if extend_gopath:
-      gopath = gopath + os.pathsep + new_gopath
-      os.environ['GOPATH'] = gopath
+      os.environ['GOPATH'] += os.pathsep + new_gopath
   else:
     file_buffer.seek(0)
     sys.stdout.writelines(file_buffer.readlines())
