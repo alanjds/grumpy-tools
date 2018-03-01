@@ -54,8 +54,10 @@ def main(modname=None, pep3147=False):
     print >> sys.stderr, 'GOPATH not set'
     return 1
 
+  dummy_modname = '__grumpy__main__.py'
+
   if pep3147:
-    workdir = grumpc.honor_pep3147('__grumpy__main__.py', only_makedirs=True)
+    workdir = grumpc.honor_pep3147(dummy_modname, only_makedirs=True)
   else:
     workdir = tempfile.mkdtemp()
 
@@ -75,7 +77,8 @@ def main(modname=None, pep3147=False):
       modname = ''.join(random.choice(string.ascii_letters) for _ in range(16))
       py_dir = os.path.join(workdir, 'src', '__python__')
       mod_dir = os.path.join(py_dir, modname)
-      os.makedirs(mod_dir)
+      if not os.path.exists(mod_dir):
+        os.makedirs(mod_dir)
       script = os.path.join(py_dir, 'module.py')
       with open(script, 'w') as f:
         f.write(sys.stdin.read())
