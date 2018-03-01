@@ -101,7 +101,8 @@ class Importer(algorithm.Visitor):
 
           for script_path in find_script_on_path(node.names[0].name):
             # TODO: Try to compile every path
-            grumpc.main(script_path, modname=modname, pep3147=True)
+            grumpc.main(script_path, modname=modname, pep3147=True, extend_gopath=True)
+            self.set_pathdirs(os.environ.get('GOPATH', ''))
             break
 
           # May be ready. But even if not importing, the code may still be valid
