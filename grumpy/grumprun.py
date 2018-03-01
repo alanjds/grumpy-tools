@@ -87,7 +87,7 @@ def main(modname=None, pep3147=False):
       with open(script, 'w') as f:
         f.write(sys.stdin.read())
       gopath = gopath + os.pathsep + workdir
-      os.putenv('GOPATH', gopath)
+      os.environ['GOPATH'] = gopath
       # Compile the dummy script to Go using grumpc.
       with open(os.path.join(mod_dir, 'module.go'), 'w+') as dummy_file:
         original_stdout = sys.stdout
