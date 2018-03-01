@@ -156,6 +156,6 @@ def main(script=None, modname='__main__', pep3147=False, extend_gopath=False):
     if extend_gopath:
       gopath = gopath + os.pathsep + new_gopath
       os.environ['GOPATH'] = gopath
-
-  file_buffer.seek(0)
-  sys.stdout.writelines(file_buffer.readlines())
+  else:
+    file_buffer.seek(0)
+    sys.stdout.writelines(file_buffer.readlines())

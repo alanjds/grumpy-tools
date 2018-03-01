@@ -92,7 +92,7 @@ def main(modname=None, pep3147=False):
       with open(os.path.join(mod_dir, 'module.go'), 'w+') as dummy_file:
         original_stdout = sys.stdout
         sys.stdout = dummy_file
-        grumpc.main(script, pep3147=True)
+        grumpc.main(script, pep3147=False)
         sys.stdout = original_stdout
 
     names = imputil.calculate_transitive_deps(modname, script, gopath)
