@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Tests for `grumpy_tools` package."""
+import tempfile
+
 import pytest
 
 from click.testing import CliRunner
@@ -38,6 +40,29 @@ def test_command_line_interface():
 def test_run_input_inline(capfd):
     runner = CliRunner()
     result = runner.invoke(cli.main, ['run', '-c', "print('Hello World')",])
+
+    stdout_output, stderr_output = capfd.readouterr()
+    assert stdout_output == 'Hello World\n'
+    assert result.exit_code == 0
+
+
+def test_run_input_stdin(capfd):
+    runner = CliRunner()
+    result = runner.invoke(cli.main, ['run'], input="print('Hello World')")
+
+    stdout_output, stderr_output = capfd.readouterr()
+    assert stdout_output == 'Hello World\n'
+    assert result.exit_code == 0
+
+
+def test_run_input_file(capfd):
+    runner = CliRunner()
+    with tempfile.NamedTemporaryFile() as script_file:
+        script_file.write("print('Hello World')")
+        script_file.flush()
+
+        result = runner.invoke(cli.main, ['run', script_file.name])
+
     stdout_output, stderr_output = capfd.readouterr()
     assert stdout_output == 'Hello World\n'
     assert result.exit_code == 0
