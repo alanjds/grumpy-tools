@@ -24,10 +24,13 @@ def transpile(script=None, modname=None, pep3147=False):
     Translates the python SCRIPT file to Go, then prints to stdout
     """
     try:
-        grumpc.main(script=script, modname=modname, pep3147=pep3147)
+        output = grumpc.main(script=script, modname=modname, pep3147=pep3147)
     except RuntimeError as e:
         print >> sys.stderr, e.message
         sys.exit(e.exitcode)
+
+    ## sys.stdout.write is harder to be tested.
+    click.echo(output)
     sys.exit(0)
 
 

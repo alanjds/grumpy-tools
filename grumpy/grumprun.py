@@ -89,10 +89,8 @@ def main(stream=None, modname=None, pep3147=False):
       os.environ['GOPATH'] += os.pathsep + workdir
       # Compile the dummy script to Go using grumpc.
       with open(os.path.join(mod_dir, 'module.go'), 'w+') as dummy_file:
-        original_stdout = sys.stdout
-        sys.stdout = dummy_file
-        grumpc.main(script, pep3147=False)
-        sys.stdout = original_stdout
+        compiled = grumpc.main(script, pep3147=False)
+        dummy_file.write(compiled)
 
     names = imputil.calculate_transitive_deps(modname, script, gopath)
     # Make sure traceback is available in all Python binaries.
