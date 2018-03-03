@@ -2,6 +2,7 @@
 
 """Console script for grumpy_tools."""
 import sys
+from StringIO import StringIO
 
 import click
 
@@ -31,10 +32,24 @@ def transpile(script=None, modname=None, pep3147=False):
 
 
 @main.command('run')
-@click.option('-m', '--modname', help='Run the named module')
+@click.argument('file', required=False, type=click.File('rb'))
+@click.option('-c', '--cmd', help='Program passed in as string')
+@click.option('-m', '--modname', help='Run run library module as a script')
 @click.option('--pep3147', is_flag=True, help='Put the transpiled outputs on a __pycache__ folder')
-def run(modname=None, pep3147=False):
-    result = grumprun.main(modname=modname, pep3147=pep3147)
+def run(file=None, cmd=None, modname=None, pep3147=False):
+    if modname:
+        stream = None
+    elif file:
+        stream = StringIO(file.read())
+    elif cmd:
+        stream = StringIO(cmd)
+    else:   # Read from STDIN
+        stream = StringIO(click.get_text_stream('stdin').read())
+
+    if stream is not None:
+        stream.seek(0)
+
+    result = grumprun.main(stream=stream, modname=modname, pep3147=pep3147)
     sys.exit(result)
 
 

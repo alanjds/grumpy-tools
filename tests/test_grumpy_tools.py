@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 """Tests for `grumpy_tools` package."""
+import unittest
 
 import pytest
 
@@ -35,3 +35,14 @@ def test_command_line_interface():
     help_result = runner.invoke(cli.main, ['--help'])
     assert help_result.exit_code == 0
     assert '--help  Show this message and exit.' in help_result.output
+
+
+class GrumpyCLITest(unittest.TestCase):
+    def setUp(self):
+        self.cli = CliRunner()
+
+    def test_run_input_inline(self):
+        result = self.cli.invoke(cli.main, ['run', '--pep3147', '-c', "print('Hello World')",])
+        # import wdb; wdb.set_trace()
+        # assert result.output == 'Hello World'
+        assert result.exit_code == 0

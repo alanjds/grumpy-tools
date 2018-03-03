@@ -48,7 +48,7 @@ func main() {
 """)
 
 
-def main(modname=None, pep3147=False):
+def main(stream=None, modname=None, pep3147=False):
   gopath = os.getenv('GOPATH', None)
   if not gopath:
     print >> sys.stderr, 'GOPATH not set'
@@ -85,7 +85,7 @@ def main(modname=None, pep3147=False):
         os.makedirs(mod_dir)
       script = os.path.join(py_dir, 'module.py')
       with open(script, 'w') as f:
-        f.write(sys.stdin.read())
+        f.write(stream.read())
       os.environ['GOPATH'] += os.pathsep + workdir
       # Compile the dummy script to Go using grumpc.
       with open(os.path.join(mod_dir, 'module.go'), 'w+') as dummy_file:
