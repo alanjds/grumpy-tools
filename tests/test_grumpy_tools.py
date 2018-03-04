@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Tests for `grumpy_tools` package."""
+import os
+import glob
+import shutil
 import tempfile
 
 import pytest
@@ -8,6 +11,9 @@ import pytest
 from click.testing import CliRunner
 
 from grumpy import cli
+
+
+HERE = os.path.dirname(__file__)
 
 
 @pytest.fixture
@@ -66,3 +72,17 @@ def test_run_input_file(capfd):
     stdout_output, stderr_output = capfd.readouterr()
     assert stdout_output == 'Hello World\n'
     assert result.exit_code == 0
+
+
+def test_pep3147_transpile():
+    runner = CliRunner()
+    # Clear the folder to be created
+    if os.path.exists('dummypackage/__pycache__'):
+        shutil.rmtree('dummypackage/__pycache__')
+
+    result = runner.invoke(cli.main, ['transpile', '--pep3147', HERE+'/dummypackage/ehlo.py'])
+
+    assert result.exit_code == 0
+    assert os.path.exists(HERE+'/dummypackage/__pycache__')
+    assert glob.glob(HERE+'/dummypackage/__pycache__/*'), 'Nothing created on the __pycache__ folder'
+    assert glob.glob(HERE+'/dummypackage/__pycache__/ehlo.grumpy*.pyc'), 'Wrong path created on the __pycache__ folder'
