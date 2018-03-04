@@ -78,7 +78,7 @@ class Importer(algorithm.Visitor):
     self.absolute_import = absolute_import
 
   def set_pathdirs(self, gopath):
-    self.pathdirs = [os.path.join(d, 'src', '__python__') for d in gopath.split(os.pathsep)]
+    self.pathdirs = [os.path.join(d, 'src', '__python__') for d in gopath.split(os.pathsep)] if gopath else []
     return self.pathdirs
 
   def generic_visit(self, node):
