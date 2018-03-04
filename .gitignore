@@ -40,6 +40,7 @@ htmlcov/
 .tox/
 .coverage
 .coverage.*
+.coverage_html/
 .cache
 nosetests.xml
 coverage.xml
@@ -99,3 +100,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# pytest
+.pytest_cache/
