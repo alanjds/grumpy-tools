@@ -13,9 +13,6 @@ from click.testing import CliRunner
 from grumpy import cli
 
 
-HERE = os.path.dirname(__file__)
-
-
 @pytest.fixture
 def response():
     """Sample pytest fixture.
@@ -80,9 +77,9 @@ def test_pep3147_transpile():
     if os.path.exists('dummypackage/__pycache__'):
         shutil.rmtree('dummypackage/__pycache__')
 
-    result = runner.invoke(cli.main, ['transpile', '--pep3147', HERE+'/dummypackage/ehlo.py'])
+    result = runner.invoke(cli.main, ['transpile', '--pep3147', 'dummypackage/ehlo.py'])
 
     assert result.exit_code == 0
-    assert os.path.exists(HERE+'/dummypackage/__pycache__')
-    assert glob.glob(HERE+'/dummypackage/__pycache__/*'), 'Nothing created on the __pycache__ folder'
-    assert glob.glob(HERE+'/dummypackage/__pycache__/ehlo.grumpy*.pyc'), 'Wrong path created on the __pycache__ folder'
+    assert os.path.exists('dummypackage/__pycache__')
+    assert glob.glob('dummypackage/__pycache__/*'), 'Nothing created on the __pycache__ folder'
+    assert glob.glob('dummypackage/__pycache__/ehlo.grumpy*.pyc'), 'Wrong path created on the __pycache__ folder'
