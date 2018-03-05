@@ -103,16 +103,22 @@ class Importer(algorithm.Visitor):
             grumpc.main(script_path, modname=modname, pep3147=True)
             break
 
-          # May be ready. But even if not importing, the code may still be valid
-          imp = self._resolve_import(node, alias.name)
+          try:
+            # May be ready. But even if not importing, the code may still be valid
+            imp = self._resolve_import(node, alias.name)
+          except util.ImportError:
+            imp = None
 
         if alias.asname:
-          imp.add_binding(Import.MODULE, alias.asname, imp.name.count('.'))
+          if imp:
+            imp.add_binding(Import.MODULE, alias.asname, imp.name.count('.'))
         else:
           parts = alias.name.split('.')
-          imp.add_binding(Import.MODULE, parts[0],
-                          imp.name.count('.') - len(parts) + 1)
-      imports.append(imp)
+          if imp:
+            imp.add_binding(Import.MODULE, parts[0],
+                            imp.name.count('.') - len(parts) + 1)
+      if imp:
+        imports.append(imp)
     return imports
 
   def visit_ImportFrom(self, node):
