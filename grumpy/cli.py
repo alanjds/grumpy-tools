@@ -59,7 +59,14 @@ def run(file=None, cmd=None, modname=None, pep3147=False):
     elif cmd:
         stream = StringIO(cmd)
     else:   # Read from STDIN
-        stream = StringIO(click.get_text_stream('stdin').read())
+        stdin = click.get_text_stream('stdin')
+        if stdin.isatty():  # Interactive terminal -> REPL
+            click.echo('Python REPL is not (yet) available.'
+                       '\nTry to pipe in your code, or pass --help for more options',
+                       err=True)
+            sys.exit(1)
+        else:               # Piped terminal
+            stream = StringIO(stdin.read())
 
     if stream is not None:
         stream.seek(0)
