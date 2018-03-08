@@ -29,12 +29,15 @@ def test_content(response):
     # assert 'GitHub' in BeautifulSoup(response.content).title.string
 
 
-def test_command_line_interface():
+def test_command_line_interface(capfd):
     """Test the CLI."""
     runner = CliRunner()
     result = runner.invoke(cli.main)
+
+    stdout_output, stderr_output = capfd.readouterr()
     assert result.exit_code == 0
-    assert 'Usage: ' in result.output
+    # assert 'REPL' in stderr_output
+
     help_result = runner.invoke(cli.main, ['--help'])
     assert help_result.exit_code == 0
     assert '--help  Show this message and exit.' in help_result.output
