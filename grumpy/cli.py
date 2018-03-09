@@ -70,6 +70,8 @@ def run(file=None, cmd=None, modname=None, pep3147=False):
 
     if stream is not None:
         stream.seek(0)
+    if not getattr(stream, 'name'):
+        stream.name = os.path.join(os.getcwd(), '__grumpy__main__')
 
     result = grumprun.main(stream=stream, modname=modname, pep3147=pep3147)
     sys.exit(result)
