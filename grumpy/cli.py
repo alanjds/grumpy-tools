@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """Console script for grumpy_tools."""
+import os
 import sys
 from StringIO import StringIO
 
@@ -70,7 +71,9 @@ def run(file=None, cmd=None, modname=None, pep3147=False):
 
     if stream is not None:
         stream.seek(0)
-    if not getattr(stream, 'name'):
+
+    # Coming from stdin or -c ?
+    if not getattr(stream, 'name', False):
         stream.name = os.path.join(os.getcwd(), '__grumpy__main__')
 
     result = grumprun.main(stream=stream, modname=modname, pep3147=pep3147)
