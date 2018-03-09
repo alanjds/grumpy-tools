@@ -9,5 +9,7 @@ Sphinx==1.6.5
 twine==1.9.1
 cryptography==2.1.4
 PyYAML==3.11
-pytest==3.3.2
-pytest-runner==2.11.1
+pytest~=3.4.1
+pytest-runner~=2.11.1
+pytest-cov~=2.5.1
+pytest-cache~=1.0

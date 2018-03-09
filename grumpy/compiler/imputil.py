@@ -63,10 +63,7 @@ class Importer(algorithm.Visitor):
   # pylint: disable=invalid-name,missing-docstring,no-init
 
   def __init__(self, gopath, modname, script, absolute_import):
-    self.pathdirs = []
-    if gopath:
-      self.pathdirs.extend(os.path.join(d, 'src', '__python__')
-                           for d in gopath.split(os.pathsep))
+    self.set_pathdirs(gopath)
     dirname, basename = os.path.split(script)
     if basename == '__init__.py':
       self.package_dir = dirname
@@ -79,6 +76,10 @@ class Importer(algorithm.Visitor):
       self.package_dir = None
       self.package_name = None
     self.absolute_import = absolute_import
+
+  def set_pathdirs(self, gopath):
+    self.pathdirs = [os.path.join(d, 'src', '__python__') for d in gopath.split(os.pathsep)] if gopath else []
+    return self.pathdirs
 
   def generic_visit(self, node):
     raise ValueError('Import cannot visit {} node'.format(type(node).__name__))
@@ -100,7 +101,8 @@ class Importer(algorithm.Visitor):
 
           for script_path in find_script_on_path(node.names[0].name):
             # TODO: Try to compile every path
-            grumpc.main(script_path, modname=modname, pep3147=True)
+            grumpc.main(script_path, modname=modname, pep3147=True, extend_gopath=True)
+            self.set_pathdirs(os.environ.get('GOPATH', ''))
             break
 
           try:
