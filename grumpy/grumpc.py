@@ -113,7 +113,8 @@ def main(script=None, modname='__main__', pep3147=False, extend_gopath=False, pa
     raise
 
   importer = imputil.Importer(gopath, modname, script,
-                              future_features.absolute_import)
+                              future_features.absolute_import,
+                              path_if_main=path_if_main)
   full_package_name = modname.replace('.', '/')
   mod_block = block.ModuleBlock(importer, full_package_name, script,
                                 py_contents, future_features)

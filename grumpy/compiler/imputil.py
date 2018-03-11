@@ -62,7 +62,8 @@ class Importer(algorithm.Visitor):
 
   # pylint: disable=invalid-name,missing-docstring,no-init
 
-  def __init__(self, gopath, modname, script, absolute_import):
+  def __init__(self, gopath, modname, script, absolute_import, path_if_main=False):
+    self.path_if_main = path_if_main
     self.set_pathdirs(gopath)
     dirname, basename = os.path.split(script)
     if basename == '__init__.py':
