@@ -85,7 +85,7 @@ def honor_pep3147(script_path, stream=None, only_makedirs=False):
   return outputs
 
 
-def main(script=None, modname='__main__', pep3147=False, extend_gopath=False):
+def main(script=None, modname='__main__', pep3147=False, extend_gopath=False, path_if_main=False):
   assert script and modname, 'Script "%s" or Modname "%s" is empty' % (script,modname)
 
   gopath = os.getenv('GOPATH', None)

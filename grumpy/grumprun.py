@@ -61,6 +61,8 @@ def main(stream=None, modname=None, pep3147=False):
   else:
     workdir = tempfile.mkdtemp()
 
+  main_folder = os.path.dirname(os.path.abspath(stream.name))
+
   try:
     if modname:
       # Find the script associated with the given module.
@@ -89,7 +91,7 @@ def main(stream=None, modname=None, pep3147=False):
       os.environ['GOPATH'] += os.pathsep + workdir
       # Compile the dummy script to Go using grumpc.
       with open(os.path.join(mod_dir, 'module.go'), 'w+') as dummy_file:
-        compiled = grumpc.main(script, pep3147=False)
+        compiled = grumpc.main(script, pep3147=False, path_if_main=main_folder)
         dummy_file.write(compiled)
 
     names = imputil.calculate_transitive_deps(modname, script, gopath)
