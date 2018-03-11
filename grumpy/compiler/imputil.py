@@ -73,6 +73,10 @@ class Importer(algorithm.Visitor):
           os.path.isfile(os.path.join(dirname, '__init__.py'))):
       self.package_dir = dirname
       self.package_name = modname[:modname.rfind('.')]
+    elif path_if_main:
+      self.package_dir = path_if_main
+      self.package_name = '__main__'
+      absolute_import = False  # It is reasonable to assume for __main__ even on Py3!
     else:
       self.package_dir = None
       self.package_name = None
@@ -100,7 +104,7 @@ class Importer(algorithm.Visitor):
           from grumpy import grumpc
           modname = node.names[0].name
 
-          for script_path in find_script_on_path(node.names[0].name):
+          for script_path in find_script_on_path(node.names[0].name, extra=[self.path_if_main]):
             # TODO: Try to compile every path
             grumpc.main(script_path, modname=modname, pep3147=True, extend_gopath=True)
             self.set_pathdirs(os.environ.get('GOPATH', ''))
@@ -174,7 +178,11 @@ class Importer(algorithm.Visitor):
     if not self.absolute_import and self.package_dir:
       script = find_script(self.package_dir, modname)
       if script:
-        return Import('{}.{}'.format(self.package_name, modname), script)
+        if self.path_if_main:
+          full_package = modname
+        else:
+          full_package = '{}.{}'.format(self.package_dir, modname)
+        return Import(full_package, script)
     for dirname in self.pathdirs:
       script = find_script(dirname, modname)
       if script:
@@ -268,8 +276,10 @@ def find_script(dirname, name):
   return None
 
 
-def find_script_on_path(name):
-  for p in sys.path:  # Python search paths
+def find_script_on_path(name, extra=None):
+  paths = [i for i in extra if i] if extra else []
+  paths.extend(sys.path)
+  for p in paths:  # Python search paths
     found = find_script(p, name)
     if found:
       yield found
