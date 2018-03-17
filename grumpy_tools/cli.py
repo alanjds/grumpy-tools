@@ -16,7 +16,7 @@ def main(args=None):
 
 @main.command('transpile')
 @click.argument('script')
-@click.option('-m', '--modname', default='__main__', help='Python module name')
+@click.option('-m', '-modname', '--modname', default='__main__', help='Python module name')
 def transpile(script=None, modname=None):
     """
     Translates the python SCRIPT file to Go, then prints to stdout
@@ -26,7 +26,7 @@ def transpile(script=None, modname=None):
 
 
 @main.command('run')
-@click.option('-m', '--modname', help='Run the named module')
+@click.option('-m', '-modname', '--modname', help='Run the named module')
 def run(modname=None):
     result = grumprun.main(modname=modname)
     sys.exit(result)
