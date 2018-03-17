@@ -29,7 +29,7 @@ import subprocess
 import sys
 import tempfile
 
-from grumpy.compiler import imputil
+from .compiler import imputil
 
 
 module_tmpl = string.Template("""\

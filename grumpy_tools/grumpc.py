@@ -24,11 +24,11 @@ import os
 import sys
 import textwrap
 
-from grumpy.compiler import block
-from grumpy.compiler import imputil
-from grumpy.compiler import stmt
-from grumpy.compiler import util
-from grumpy.vendor import pythonparser
+from .compiler import block
+from .compiler import imputil
+from .compiler import stmt
+from .compiler import util
+from .vendor import pythonparser
 
 
 def main(script=None, modname=None):
